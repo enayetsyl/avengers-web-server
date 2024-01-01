@@ -1,7 +1,7 @@
 const mongoose = require('./db');
 
 const leadSchema = new mongoose.Schema({
-  name: String, 
+  businessName: String, 
   facebookAddress: String,
   mobileNumber: String,
   facebookPageName: String,
@@ -17,11 +17,16 @@ const leadSchema = new mongoose.Schema({
   ourCreatedWebsiteLink: String,
   messageSentAtFirstApproach: String,
   marketingMessageSent: Boolean,
+  existingWebsiteLink: String
 });
 
-
+const userSchema = new mongoose.Schema({
+  email: String,
+  password: String,
+})
 
 const Lead = mongoose.model('Lead', leadSchema);
+const User = mongoose.model('User', userSchema);
 
 
-module.exports = { Lead }
+module.exports = { Lead, User }

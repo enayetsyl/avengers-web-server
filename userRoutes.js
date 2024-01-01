@@ -1,26 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { Lead } = require('./model');
+const { User } = require('./model');
 
 // FOR ALL LEADS
 
-router.get('/allLeads', async (req, res) => {
-  try {
-    const result = await Lead.find();
-    console.log(result)
-    res.send(result);
-  } catch (error) {
-    console.error('Error fetching leads:', error.message);
-    res.status(500).send('Internal Server Error');
-  }
-});
+// router.get('/allLeads', async (req, res) => {
+//   try {
+//     const result = await Lead.find();
+//     res.send(result);
+//   } catch (error) {
+//     console.error('Error fetching leads:', error.message);
+//     res.status(500).send('Internal Server Error');
+//   }
+// });
 
 // SINGLE LEAD GET ROUTE
 
-router.get('/allLeads/:id', async (req, res) => {
+router.get('/singleUser', async (req, res) => {
   try {
-    const id = req.params.id;
-    const result = await Lead.findById(id);
+    const email = req.query.email;
+    console.log('query', email)
+    const result = await User.findOne({email});
+    console.log('result', result)
     res.send(result);
   } catch (error) {
     console.error('Error fetching leads:', error.message);
@@ -29,10 +30,11 @@ router.get('/allLeads/:id', async (req, res) => {
 });
 
 // FOR ADD LEAD POST ROUTE
-router.post('/addLead', async (req, res) => {
+router.post('/addUser', async (req, res) => {
   try {
-    const lead = new Lead(req.body);
-    const result = await lead.save();
+    const user = new User(req.body);
+    const result = await user.save();
+    console.log(result)
     res.send(result);
   } catch (error) {
     console.error('Error adding lead:', error.message);
