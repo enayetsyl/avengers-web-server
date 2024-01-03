@@ -17,16 +17,19 @@ const leadSchema = new mongoose.Schema({
   ourCreatedWebsiteLink: String,
   messageSentAtFirstApproach: String,
   marketingMessageSent: Boolean,
-  existingWebsiteLink: String
+  existingWebsiteLink: String,
+  entryBy: String,
 });
 
 const userSchema = new mongoose.Schema({
+  name: String,
   email: String,
   password: String,
+  role: String,
 })
 
 const Lead = mongoose.model('Lead', leadSchema);
 const User = mongoose.model('User', userSchema);
 
-
+ 
 module.exports = { Lead, User }

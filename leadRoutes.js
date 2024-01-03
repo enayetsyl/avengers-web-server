@@ -4,16 +4,58 @@ const { Lead } = require('./model');
 
 // FOR ALL LEADS
 
-router.get('/allLeads', async (req, res) => {
+router.get('/allLeads', async(req, res) => {
+  console.log('all leads route hit')
   try {
-    const result = await Lead.find();
-    console.log(result)
-    res.send(result);
+        const result = await Lead.find();
+        res.send(result);
+      } catch (error) {
+        console.error('Error fetching leads:', error.message);
+        res.status(500).send('Internal Server Error');
+      } 
+})
+
+  // SINGLE USER GET LEAD
+router.get('/singleUserLeads', async(req, res) => {
+  const email = req.query.email;
+  try {
+    const result = await Lead.find({entryBy:email},{ firstCallDate:0, firstMeetingDate:0, converted:0, reasonForNonConversion: 0,
+    websiteCreation: 0,
+    ourCreatedWebsiteLink: 0,
+    messageSentAtFirstApproach: 0,
+    marketingMessageSent: 0,})
+   res.send(result)
   } catch (error) {
     console.error('Error fetching leads:', error.message);
     res.status(500).send('Internal Server Error');
   }
-});
+})
+
+
+// DELETE LEAD 
+
+router.delete('/deleteLead/:id', async(req, res) => {
+ try {
+  console.log('delete route hit')
+  const id = req.params.id;
+  console.log('delete id', id)
+  const result = await Lead.deleteOne({_id:id})
+  res.send(result)
+ } catch (error) {
+  console.error('Error deleting leads:', error.message);
+    res.status(500).send('Internal Server Error');
+ }
+}) 
+
+// router.get('/allLeads', async (req, res) => {
+//   try {
+//     const result = await Lead.find();
+//     res.send(result);
+//   } catch (error) {
+//     console.error('Error fetching leads:', error.message);
+//     res.status(500).send('Internal Server Error');
+//   } 
+// });
 
 // SINGLE LEAD GET ROUTE
 
