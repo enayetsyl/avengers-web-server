@@ -4,6 +4,21 @@ const { ObjectId } = require('mongodb');
 const { Lead, User, Caller } = require('./model');
 const { default: mongoose } = require('mongoose');
 
+
+// ALL CALLER DATA FOR MARKETING ADMIN
+router.get('/allCaller', async(req,res) => {
+  console.log('all caller route hit')
+  try {
+    const result = await Caller.find()
+    console.log('all caller data', result)
+    res.send(result)
+  } catch (error) {
+    console.log('Error in fetching all caller data for marketing admin', error)
+    res.status(500).send("Internal Server Error")
+  }
+})
+
+
 // INDIVIDUAL CALLER DATA GET ROUTE
 
 router.get('/callerLead', async(req,res) => {

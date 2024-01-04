@@ -18,8 +18,18 @@ const saltRounds = 10
 
 // SINGLE LEAD GET ROUTE
 
+// DEVELOPER GET ROUTE
+router.get('/developer', async(req, res) => {
+  try {
+    const result = await User.find({role:{$in:['developer', 'New User']}}) 
+    res.send(result)
+  } catch (error) {
+    console.log('Error in getting developer user', error)
+    res.status(500).send('Internal Server Error')
+  }
+})
 
-
+// LEAD COLLECTOR AND CALLER GET ROUTE
 router.get('/allUsers', async(req, res) => {
   console.log('user route hit')
   try{
