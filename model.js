@@ -8,8 +8,7 @@ const leadSchema = new mongoose.Schema({
   businessType: String,
   websiteAvailable: Boolean,
   email: String,
-  websiteAddress: String,
-  firstCallDate: String, 
+  firstCallDate: Date, 
   firstMeetingDate: Date,
   converted: Boolean,
   reasonForNonConversion: String,
@@ -28,8 +27,30 @@ const userSchema = new mongoose.Schema({
   role: String,
 })
 
+const callerSchema = new mongoose.Schema({
+  businessName: String,
+  facebookAddress: String,
+  mobileNumber: String,
+  facebookPageName: String,
+  businessType: String,
+  websiteAvailabe: Boolean,
+  email: String,
+  firstCallDate: Date,
+  firstMeetingDate: Date,
+  converted: Boolean,
+  reasonForNonConversion: String,
+  websiteCreation: String,
+  ourCreatedWebsiteLink: String,
+  messageSentAtFirstApproach: String,
+  marketingMessageSent: Boolean,
+  existingWebsiteLink: String,
+  entryBy: String,
+  callerName: String,
+  callerEmail: String,
+})
+
 const Lead = mongoose.model('Lead', leadSchema);
 const User = mongoose.model('User', userSchema);
-
+const Caller = mongoose.model('Caller', callerSchema)
  
-module.exports = { Lead, User }
+module.exports = { Lead, User, Caller }

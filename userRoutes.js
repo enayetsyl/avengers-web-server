@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt')
 const router = express.Router();
 const { User } = require('./model');
+const { route } = require('./leadRoutes');
 const saltRounds = 10
 // FOR ALL LEADS
 
@@ -126,7 +127,16 @@ router.patch('/userRoleChange/:id', async(req, res) =>{
   }
 })
 
- 
+ //--- CALLER INFO GET ROUTE
+ router.get('/callerInfo', async(req, res) => {
+  try {
+    const result = await User.find({role: 'Caller'})
+    res.send(result)
+  } catch (error) {
+    console.log('Error in fetching caller info', error)
+    res.status(500).send('Internal Server Error')
+  }
+ })
 
 // // Lead PATCH ROUTE
 // router.patch('/allLeads/:id', async (req, res) => {
