@@ -2,18 +2,18 @@ const express = require("express");
 const router = express.Router();
 const { Lead, Developer } = require("./model");
 
-// FOR ALL LEADS
+//----- ALL LEADS FOR MARKETING ADMIN
 
-// router.get("/allLeads", async (req, res) => {
-//   console.log("all leads route hit");
-//   try {
-//     const result = await Lead.find();
-//     res.send(result);
-//   } catch (error) {
-//     console.error("Error fetching leads:", error.message);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
+router.get("/allLeads", async (req, res) => {
+  console.log("all leads route hit");
+  try {
+    const result = await Lead.find();
+    res.send(result);
+  } catch (error) {
+    console.error("Error fetching leads:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // ----------SINGLE USER GET LEAD
 router.get("/singleUserLeads", async (req, res) => {
@@ -100,7 +100,7 @@ router.post('/leadPostForDeveloper/:id', async(req, res) => {
  try {
   const postFound = await Lead.findById(id)
   if(postFound){
-    const data = {...postFound._doc, developerName: '',
+    const data = {...postFound._doc, developerName: '', 
       developerEmail: '',}
      const saveData = new Developer(data)
      const savePost = await saveData.save()

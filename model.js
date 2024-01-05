@@ -47,6 +47,8 @@ const callerSchema = new mongoose.Schema({
   entryBy: String,
   callerName: String,
   callerEmail: String,
+  developerName: String,
+  developerEmail: String,
 })
 
 // Developer Schema
