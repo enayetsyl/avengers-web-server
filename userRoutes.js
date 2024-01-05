@@ -4,24 +4,12 @@ const router = express.Router();
 const { User } = require('./model');
 const { route } = require('./leadRoutes');
 const saltRounds = 10
-// FOR ALL LEADS
 
-// router.get('/allLeads', async (req, res) => {
-//   try {
-//     const result = await Lead.find();
-//     res.send(result);
-//   } catch (error) {
-//     console.error('Error fetching leads:', error.message);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
-
-// SINGLE LEAD GET ROUTE
 
 // DEVELOPER GET ROUTE
 router.get('/developer', async(req, res) => {
   try {
-    const result = await User.find({role:{$in:['developer', 'New User']}}) 
+    const result = await User.find({role:{$in:['Developer', 'NewUser']}}) 
     res.send(result)
   } catch (error) {
     console.log('Error in getting developer user', error)
@@ -99,8 +87,7 @@ router.post('/addUser', async (req, res) => {
       const hashedPassword = await hashPassword(plainPassword)
       console.log(hashedPassword)
       user.password = hashedPassword
-      userData = {...user, role:'New User'}
-      console.log('user data',userData)
+      userData = {...user, role:'NewUser'}
       saveUser = new User(userData)
       const result = await saveUser.save();
       console.log(result)
@@ -121,9 +108,7 @@ router.post('/addUser', async (req, res) => {
 router.patch('/userRoleChange/:id', async(req, res) =>{
   try {
     const id = req.params.id;
-    console.log(id)
     const newRole = req.body
-    console.log(newRole)
     const result = await User.updateOne(
       {_id:id},
       {
@@ -141,6 +126,16 @@ router.patch('/userRoleChange/:id', async(req, res) =>{
  router.get('/callerInfo', async(req, res) => {
   try {
     const result = await User.find({role: 'Caller'})
+    res.send(result)
+  } catch (error) {
+    console.log('Error in fetching caller info', error)
+    res.status(500).send('Internal Server Error')
+  }
+ })
+ //--- DEVELOPER INFO GET ROUTE
+ router.get('/developerInfo', async(req, res) => {
+  try {
+    const result = await User.find({role: 'Developer'})
     res.send(result)
   } catch (error) {
     console.log('Error in fetching caller info', error)

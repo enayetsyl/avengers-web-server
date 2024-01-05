@@ -49,8 +49,33 @@ const callerSchema = new mongoose.Schema({
   callerEmail: String,
 })
 
+// Developer Schema
+const developerSchema = new mongoose.Schema({
+  businessName: String, 
+  facebookAddress: String,
+  mobileNumber: String,
+  facebookPageName: String,
+  businessType: String,
+  websiteAvailable: Boolean,
+  email: String,
+  firstCallDate: Date, 
+  firstMeetingDate: Date,
+  converted: Boolean,
+  reasonForNonConversion: String,
+  websiteCreation: String,
+  ourCreatedWebsiteLink: String,
+  messageSentAtFirstApproach: String,
+  marketingMessageSent: Boolean,
+  existingWebsiteLink: String,
+  entryBy: String,
+  developerName: String,
+  developerEmail: String,
+});
+
+
 const Lead = mongoose.model('Lead', leadSchema);
 const User = mongoose.model('User', userSchema);
 const Caller = mongoose.model('Caller', callerSchema)
+const Developer = mongoose.model('Developer', developerSchema)
  
-module.exports = { Lead, User, Caller }
+module.exports = { Lead, User, Caller, Developer }

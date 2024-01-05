@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const { Lead } = require("./model");
+const { Lead, Developer } = require("./model");
 
 // FOR ALL LEADS
 
-router.get("/allLeads", async (req, res) => {
-  console.log("all leads route hit");
-  try {
-    const result = await Lead.find();
-    res.send(result);
-  } catch (error) {
-    console.error("Error fetching leads:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// router.get("/allLeads", async (req, res) => {
+//   console.log("all leads route hit");
+//   try {
+//     const result = await Lead.find();
+//     res.send(result);
+//   } catch (error) {
+//     console.error("Error fetching leads:", error.message);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
-// SINGLE USER GET LEAD
+// ----------SINGLE USER GET LEAD
 router.get("/singleUserLeads", async (req, res) => {
   const email = req.query.email;
   try {
@@ -38,6 +38,8 @@ router.get("/singleUserLeads", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// ------------FOR EDITING LEAD DATA GET ROUTE
 
 router.get("/editLeadGet/:id", async (req, res) => {
   try {
@@ -62,7 +64,7 @@ router.get("/editLeadGet/:id", async (req, res) => {
   }
 });
 
-// DELETE LEAD
+//----------- DELETE LEAD
 
 router.delete("/deleteLead/:id", async (req, res) => {
   try {
@@ -77,15 +79,7 @@ router.delete("/deleteLead/:id", async (req, res) => {
   }
 });
 
-// router.get('/allLeads', async (req, res) => {
-//   try {
-//     const result = await Lead.find();
-//     res.send(result);
-//   } catch (error) {
-//     console.error('Error fetching leads:', error.message);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
+
 
 // SINGLE LEAD GET ROUTE
 
@@ -100,7 +94,30 @@ router.get("/allLeads/:id", async (req, res) => {
   }
 });
 
-// FOR ADD LEAD POST ROUTE
+// --------FOR POST LEAD TO DEVELOPER COLLECTION ROUTE
+router.post('/leadPostForDeveloper/:id', async(req, res) => {
+  const id = req.params.id
+ try {
+  const postFound = await Lead.findById(id)
+  if(postFound){
+    const data = {...postFound._doc, developerName: '',
+      developerEmail: '',}
+     const saveData = new Developer(data)
+     const savePost = await saveData.save()
+    if(savePost){
+      const result = await Lead.findByIdAndDelete(id)
+    console.log(result)
+    res.send(result)
+    }
+  }
+ } catch (error) {
+  console.log('Error in posting', error)
+  res.status(500).send("Internal Server Error")
+ }
+  })
+
+ 
+// ----------FOR ADD LEAD POST ROUTE
 router.post("/addLead", async (req, res) => {
   try {
     const lead = new Lead(req.body);
@@ -112,7 +129,7 @@ router.post("/addLead", async (req, res) => {
   }
 });
 
-// EDIT LEAD DATA PATCH ROUTE
+// ---------EDIT LEAD DATA PATCH ROUTE
 router.patch('/editLeadPatch/:id', async(req, res)=> {
 try {
   const id = req.params.id
@@ -126,34 +143,5 @@ try {
 }
 })
 
-
-// Lead PATCH ROUTE
-// router.patch('/allLeads/:id', async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//   const updatedLeadData = req.body;
-//   const result = await Lead.findByIdAndUpdate(
-//     id,
-//     { $set: updatedLeadData },
-//     { new: true }
-//   );
-//   res.send(result);
-//   } catch (error) {
-//     console.error('Error updating lead:', error.message);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
-
-// FOR DELETE PRODUCT ROUTE
-router.delete("/allLeads/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const result = await Lead.findByIdAndDelete(id);
-    res.send(result);
-  } catch (error) {
-    console.error("Error deleting lead:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
 
 module.exports = router;
