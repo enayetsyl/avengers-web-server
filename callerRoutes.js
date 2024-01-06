@@ -1,16 +1,15 @@
 const express = require('express')
 const router = express.Router();
 const { ObjectId } = require('mongodb');
-const { Lead, User, Caller } = require('./model');
+const { Lead, User, Caller, Developer } = require('./model');
 const { default: mongoose } = require('mongoose');
+const {verifyToken} = require('./middleware')
 
 
-// ALL CALLER DATA FOR MARKETING ADMIN
-router.get('/allCaller', async(req,res) => {
-  console.log('all caller route hit')
+// ALL UNASSIGN DATA FOR MARKETING ADMIN
+router.get('/assignCaller', async(req,res) => {
   try {
-    const result = await Caller.find()
-    console.log('all caller data', result)
+    const result = await Caller.find({callerName: ''})
     res.send(result)
   } catch (error) {
     console.log('Error in fetching all caller data for marketing admin', error)
@@ -18,10 +17,23 @@ router.get('/allCaller', async(req,res) => {
   }
 })
 
+// ALL ASSIGN DATA FOR MARKETING ADMIN
+router.get('/allCallerData', async(req,res) => {
+  try {
+    const result = await Caller.find({callerName: {$ne:''}})
+    res.send(result)
+  } catch (error) {
+    console.log('Error in fetching all caller data for marketing admin', error)
+    res.status(500).send("Internal Server Error")
+  }
+})
+ 
+
 
 // INDIVIDUAL CALLER DATA GET ROUTE
 
-router.get('/callerLead', async(req,res) => {
+router.get('/callerLead', verifyToken,  async(req,res) => {
+  console.log('token', req.headers)
   const email = req.query.email;
   try {
   const result = await Caller.find({callerEmail
@@ -31,7 +43,7 @@ router.get('/callerLead', async(req,res) => {
     console.log(`Error in caller lead fetching`, error)
     res.status(500).send("Internal Server Error")
   }
-})
+}) 
   
 // SINGLE DATA GET ROUTE FOR CALLER EDIT PAGE 
 
@@ -39,6 +51,7 @@ router.get('/singleCallerData/:id', async(req, res) => {
   const id = req.params.id
   try {
     const result = await Caller.findById(id);
+    console.log('single caller editn data', result)
     res.send(result)
   } catch (error) {
     console.log('Error in fetching single caller data', error)
@@ -53,22 +66,17 @@ router.patch('/assignCaller', async(req, res) => {
     const callerId = req.query.callerId;
   const leadId = req.query.leadId
   const userData = await User.findOne({_id:callerId})
-  const leadData = await Lead.findOne({_id:leadId})
-  const newData = {
-    ...leadData._doc, callerName:userData.name, callerEmail: userData.email
-  }
-  const caller = new Caller(newData)
-  const result = await caller.save()
-  if(result._id){
-    const deletedItem = await Lead.findByIdAndDelete({_id: leadId})
-    if(deletedItem._id){
-      res.status(200).send('Caller Assigned Successfully')
-    }else{
-      res.status(500).send('An Error Occurred')
-    }
-  }else{
-    res.status(500).send('An Error Occurred')
-  }
+  const leadData = await Caller.findOne({_id:leadId})
+  console.log('caller id', userData)
+  console.log('lead data', leadData)
+    const id  = leadData._id
+    console.log('id', id)
+  const result = await Caller.findByIdAndUpdate(id, {$set:{
+    callerName: userData.name,
+  callerEmail: userData.email,
+  }})
+  res.status(200).send("Caller Assigned Successfully")
+ 
   } catch (error) {
     console.log('Error in lead updating', error)
   res.status(500).send('Internal Server Error')

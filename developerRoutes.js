@@ -87,22 +87,18 @@ try {
 // DEVELOPER DATA POST ROUTE
 router.post('/developerPost/:id', async(req, res) => {
   const id = req.params.id;
-  console.log('post id',id)
   try {
     const postFind = await Developer.findById(id)
     if(postFind){
       const data = {...postFind._doc,  callerName: '',
         callerEmail: '',}
-      console.log(data)
       const saveToCaller = new Caller(data)
       const result = await saveToCaller.save()
       if(result){
         const result = await Developer.findByIdAndDelete(id)
-        console.log(result)
         res.send(result)
       }
     }
-    // console.log(postFind)
   } catch (error) {
     console.log('Error in posting developer data', error)
     res.status(500).send('Internal Server Error')

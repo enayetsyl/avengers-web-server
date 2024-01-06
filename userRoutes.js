@@ -9,7 +9,7 @@ const saltRounds = 10
 // DEVELOPER GET ROUTE
 router.get('/developer', async(req, res) => {
   try {
-    const result = await User.find({role:{$in:['Developer', 'NewUser']}}) 
+    const result = await User.find({role:{$in:['Developer', 'NewUser']}}).sort({role:1}) 
     res.send(result)
   } catch (error) {
     console.log('Error in getting developer user', error)
@@ -21,7 +21,7 @@ router.get('/developer', async(req, res) => {
 router.get('/allUsers', async(req, res) => {
   console.log('user route hit')
   try{
-    const result = await User.find({}, {password: 0, __v:0})
+    const result = await User.find({role:{$nin:['marketingAdmin', 'developmentAdmin', 'Developer']}}, {password: 0, __v:0}).sort({role:-1})
     res.send(result)
   }catch(error){
     console.log('Error fetching data', error.message)

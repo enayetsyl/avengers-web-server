@@ -4,16 +4,17 @@ const { Lead, Developer } = require("./model");
 
 //----- ALL LEADS FOR MARKETING ADMIN
 
-router.get("/allLeads", async (req, res) => {
-  console.log("all leads route hit");
-  try {
-    const result = await Lead.find();
-    res.send(result);
-  } catch (error) {
-    console.error("Error fetching leads:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// router.get("/allLeads", async (req, res) => {
+//   console.log("all leads route hit");
+//   try {
+//     const result = await Lead.find();
+//     console.log(result)
+//     res.send(result);
+//   } catch (error) {
+//     console.error("Error fetching leads:", error.message);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 // ----------SINGLE USER GET LEAD
 router.get("/singleUserLeads", async (req, res) => {
