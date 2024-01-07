@@ -3,11 +3,13 @@ const bcrypt = require('bcrypt')
 const router = express.Router();
 const { User } = require('./model');
 const { route } = require('./leadRoutes');
+const {verifyToken, verifyAdmin} = require('./middleware')
+require('dotenv').config();
 const saltRounds = 10
 
 
 // DEVELOPER GET ROUTE
-router.get('/developer', async(req, res) => {
+router.get('/developer',verifyToken, verifyAdmin, async(req, res) => {
   try {
     const result = await User.find({role:{$in:['Developer', 'NewUser']}}).sort({role:1}) 
     res.send(result)
@@ -18,8 +20,9 @@ router.get('/developer', async(req, res) => {
 })
 
 // LEAD COLLECTOR AND CALLER GET ROUTE
-router.get('/allUsers', async(req, res) => {
+router.get('/allUsers', verifyToken, verifyAdmin,  async(req, res) => {
   console.log('user route hit')
+  
   try{
     const result = await User.find({role:{$nin:['marketingAdmin', 'developmentAdmin', 'Developer']}}, {password: 0, __v:0}).sort({role:-1})
     res.send(result)
@@ -143,33 +146,6 @@ router.patch('/userRoleChange/:id', async(req, res) =>{
   }
  })
 
-// // Lead PATCH ROUTE
-// router.patch('/allLeads/:id', async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//   const updatedLeadData = req.body;
-//   const result = await Lead.findByIdAndUpdate(
-//     id,
-//     { $set: updatedLeadData },
-//     { new: true }
-//   );
-//   res.send(result);
-//   } catch (error) {
-//     console.error('Error updating lead:', error.message);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
 
-// // FOR DELETE PRODUCT ROUTE
-// router.delete('/allLeads/:id', async (req, res) => {
-//   const id = req.params.id;
-//   try {
-//     const result = await Lead.findByIdAndDelete(id);
-//     res.send(result);
-//   } catch (error) {
-//     console.error('Error deleting lead:', error.message);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
 
 module.exports = router;

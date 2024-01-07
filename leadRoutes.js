@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Lead, Developer } = require("./model");
-
+const {verifyToken} = require('./middleware')
 //----- ALL LEADS FOR MARKETING ADMIN
 
 // router.get("/allLeads", async (req, res) => {
@@ -117,9 +117,9 @@ router.post('/leadPostForDeveloper/:id', async(req, res) => {
  }
   })
 
- 
 // ----------FOR ADD LEAD POST ROUTE
-router.post("/addLead", async (req, res) => {
+router.post("/addLead", verifyToken, async (req, res) => {
+  console.log('add lead route hit')
   try {
     const lead = new Lead(req.body);
     const result = await lead.save();
