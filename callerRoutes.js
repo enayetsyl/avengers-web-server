@@ -88,8 +88,17 @@ router.patch('/assignCaller', async(req, res) => {
 router.patch('/callerUpdateData/:id', async(req, res) => {
   try {
     const id = req.params.id;
-  const body = req.body;
-  const result = await Caller.findByIdAndUpdate(id,{$set:body})
+    const body = req.body;
+
+    const updateFields = {}
+
+    for (const key in body){
+      if(body[key] !== undefined && body[key] !== null && body[key] !== ''){
+        updateFields[key] = body[key]
+      }
+    }
+
+  const result = await Caller.findByIdAndUpdate(id,{$set:updateFields}, {new:true})
   res.send(result)
   } catch (error) {
     console.log('Error in caller data update', error)

@@ -31,7 +31,7 @@ router.get('/allUsers', verifyToken, verifyAdmin,  async(req, res) => {
     res.status(500).send("Internal server error")
   }
 })
-
+ 
 // SINGLE USER GET ROUTE
 
 router.get('/userLogin', async (req, res) => {
