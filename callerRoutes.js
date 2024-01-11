@@ -245,10 +245,10 @@ router.get('/weekWiseLeadCount', async(req, res) => {
       const weekWiseCount = leadCount + callerCount + developerCount;
       
     counts.unshift({
-      weekStart: currentWeekStart.toISOString().split('T')[0], weekWiseCount
+      weekStart: currentWeekStart.toLocaleDateString('en-US'), weekWiseCount
     })
   }
-  // console.log('last 7', counts)
+  console.log('last 7', counts)
   res.status(200).json(counts)
 
   } catch (error) {
@@ -261,7 +261,7 @@ router.get('/weekWiseLeadCount', async(req, res) => {
 // MONTH WISE LEAD COUNT
 router.get('/monthWiseLeadCount', async(req, res) => {
   try {
-    console.log('monthWiseLeadCount')
+    // console.log('monthWiseLeadCount')
     const today = new Date()
     today.setUTCHours(0,0,0,0)
     const counts = []
@@ -272,15 +272,11 @@ router.get('/monthWiseLeadCount', async(req, res) => {
       (today.getFullYear() - startOfYear.getFullYear()) * 12 + today.getMonth() - startOfYear.getMonth() 
     +1
 
-    console.log('today:', today);
-    console.log('startOfYear:', startOfYear);
-    console.log('monthsFromStart:', monthsFromStart);
-
-    for(let i = monthsFromStart - 1; i >= 0; i--){
+     for(let i = monthsFromStart - 1; i >= 0; i--){
       const currentMonthStart = new Date(startOfYear.getFullYear(), startOfYear.getMonth() + i, 1,0,0,0,0);
 
       // currentMonthStart.setMonth(startOfYear.getMonth() + i)
-      console.log('Current month start:', currentMonthStart);
+      // console.log('Current month start:', currentMonthStart);
 
       currentMonthStart.setDate(1)
 
@@ -303,7 +299,7 @@ router.get('/monthWiseLeadCount', async(req, res) => {
       monthStart: currentMonthStart.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }), monthWiseCount
     })
   }
-  console.log('month wise', counts)
+  // console.log('month wise', counts)
   res.status(200).json(counts)
 
   } catch (error) {
