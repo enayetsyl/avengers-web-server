@@ -8,7 +8,6 @@ router.get('/allDevLead', async(req, res) => {
   console.log('all dev route hit')
   try {
     const result = await Developer.find()
-    console.log(result)
     res.send(result)
   } catch (error) {
     console.log('Error in fetching all developer lead', error)
@@ -21,13 +20,15 @@ router.patch('/assignDeveloper', async(req, res) => {
   try {
     const developerId = req.query.callerId;
   const leadId = req.query.leadId
-  console.log('dev id', developerId)
-  console.log('lead id', leadId)
+
+  const developerAssignedOn = new Date();
+  console.log('assignDate', developerAssignedOn)
 
   const userData = await User.findOne({_id:developerId})
   
   const result = await Developer.findByIdAndUpdate(leadId, 
     {$set:{
+      developerAssignedOn,
       developerName:userData.name, developerEmail: userData.email,
     }}
     )
@@ -71,10 +72,18 @@ router.get('/singleDeveloperData/:id', async (req, res) => {
 router.patch('/developerUpdateData/:id', async(req, res) => {
 const id = req.params.id
 const body = req.body;
+const { userEmail, timestamp, ...updateField} = body;
+
+const newChangedItem = {
+  userEmail,
+  timestamp,
+  changedItem: updateField,
+}
+console.log('body', body)
 try {
-  console.log(id, body)
   const result = await Developer.findByIdAndUpdate(id, {
-    $set:body
+    $set:updateField,
+    $push: {changeHistory: newChangedItem}
   })
   console.log(result)
   res.send(result)
@@ -87,10 +96,13 @@ try {
 // DEVELOPER DATA POST ROUTE
 router.post('/developerPost/:id', async(req, res) => {
   const id = req.params.id;
+  const developerPostDate = new Date()
   try {
     const postFind = await Developer.findById(id)
     if(postFind){
-      const data = {...postFind._doc,  callerName: '',
+      const data = {...postFind._doc,
+        developerPostDate,
+        callerName: '',
         callerEmail: '',}
       const saveToCaller = new Caller(data)
       const result = await saveToCaller.save()
