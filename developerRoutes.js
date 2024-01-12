@@ -164,20 +164,16 @@ router.get('/lastWeekDev', async(req, res)=> {
 })
 // -----THIS MONTH DEV COUNT
 
-router.get('/thisMonthLead', async(req, res)=> {
+router.get('/thisMonthDev', async(req, res)=> {
   try {
     const today = new Date()
     // const dayOfMonth = today.getDate()
     const thisMonthStartDate = new Date(today.getFullYear(), today.getMonth(), 1)
    
   
-    const leadCount = await Lead.countDocuments({developerPostDate: {$gte: thisMonthStartDate}})
-    const callerCount = await Caller.countDocuments({developerPostDate: {$gte: thisMonthStartDate}})
-    const developerCount = await Developer.countDocuments({developerPostDate: {$gte: thisMonthStartDate}})
+    const thisMonthDevCount = await Caller.countDocuments({developerPostDate: {$gte: thisMonthStartDate}})
 
-    const thisMonthLeadCount = leadCount + callerCount + developerCount;
-  
-    res.status(200).json({thisMonthLeadCount})
+    res.status(200).json({thisMonthDevCount})
   } catch (error) {
     console.log('Error in same day count data', error)
     res.status(500).json({error: "Internal server Error"})
@@ -185,18 +181,15 @@ router.get('/thisMonthLead', async(req, res)=> {
 })
 // -----THIS YEAR DEV COUNT
 
-router.get('/thisYearLead', async(req, res)=> {
+router.get('/thisYearDev', async(req, res)=> {
   try {
     const today = new Date()
     const thisYearStartDate = new Date(today.getFullYear(), 0, 1)
    
-    const leadCount = await Lead.countDocuments({developerPostDate: {$gte: thisYearStartDate}})
-    const callerCount = await Caller.countDocuments({developerPostDate: {$gte: thisYearStartDate}})
-    const developerCount = await Developer.countDocuments({developerPostDate: {$gte: thisYearStartDate}})
-
-    const thisYearLeadCount = leadCount + callerCount + developerCount;
   
-    res.status(200).json({thisYearLeadCount})
+    const thisYearDevCount = await Caller.countDocuments({developerPostDate: {$gte: thisYearStartDate}})
+    
+    res.status(200).json({thisYearDevCount})
   } catch (error) {
     console.log('Error in same day count data', error)
     res.status(500).json({error: "Internal server Error"})
@@ -205,7 +198,7 @@ router.get('/thisYearLead', async(req, res)=> {
 
 
 // WEEKLY DAY WISE DEV COUNT
-router.get('/last7DaysLeadCount', async(req, res) => {
+router.get('/last7DaysDevCount', async(req, res) => {
   try {
     const today = new Date()
     today.setUTCHours(0,0,0,0)
@@ -215,14 +208,10 @@ router.get('/last7DaysLeadCount', async(req, res) => {
       const currentDate = new Date(today)
       currentDate.setDate(today.getDate() - i)
 
-      const leadCount = await Lead.countDocuments({ developerPostDate: { $gte: currentDate, $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000) } })
+          
+      const dayWiseCount = await Caller.countDocuments({ developerPostDate: { $gte: currentDate, $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000) } })
      
-      const callerCount = await Caller.countDocuments({ developerPostDate: { $gte: currentDate, $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000) } })
-     
-      const developerCount = await Developer.countDocuments({ developerPostDate: { $gte: currentDate, $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000) } })
-      
-      const dayWiseCount = leadCount + callerCount + developerCount;
-      
+            
     counts.unshift({
       date: currentDate.toISOString().split('T')[0], dayWiseCount
     })
@@ -237,7 +226,7 @@ router.get('/last7DaysLeadCount', async(req, res) => {
 
 
 // WEEK WISE DEV COUNT
-router.get('/weekWiseLeadCount', async(req, res) => {
+router.get('/weekWiseDevCount', async(req, res) => {
   try {
     const today = new Date()
     today.setUTCHours(0,0,0,0)
@@ -254,14 +243,11 @@ router.get('/weekWiseLeadCount', async(req, res) => {
 
       currentWeekStart.setDate(currentWeekStart.getDate() + i * 7)
 
-      const leadCount = await Lead.countDocuments({ developerPostDate: { $gte: currentWeekStart, $lt: new Date(currentWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000) } })
+     
       
-      const callerCount = await Caller.countDocuments({ developerPostDate: { $gte: currentWeekStart, $lt: new Date(currentWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000) } })
+      const weekWiseCount = await Caller.countDocuments({ developerPostDate: { $gte: currentWeekStart, $lt: new Date(currentWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000) } })
       
-      const developerCount = await Developer.countDocuments({ developerPostDate: { $gte: currentWeekStart, $lt: new Date(currentWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000) } })
-      
-      const weekWiseCount = leadCount + callerCount + developerCount;
-      
+           
     counts.unshift({
       weekStart: currentWeekStart.toLocaleDateString('en-US'), weekWiseCount
     })
@@ -276,9 +262,9 @@ router.get('/weekWiseLeadCount', async(req, res) => {
 
 
 // MONTH WISE DEV COUNT
-router.get('/monthWiseLeadCount', async(req, res) => {
+router.get('/monthWiseDevCount', async(req, res) => {
   try {
-    // console.log('monthWiseLeadCount')
+    // console.log('monthWiseDevCount')
     const today = new Date()
     today.setUTCHours(0,0,0,0)
     const counts = []
@@ -292,26 +278,12 @@ router.get('/monthWiseLeadCount', async(req, res) => {
      for(let i = monthsFromStart - 1; i >= 0; i--){
       const currentMonthStart = new Date(startOfYear.getFullYear(), startOfYear.getMonth() + i, 1,0,0,0,0);
 
-      // currentMonthStart.setMonth(startOfYear.getMonth() + i)
-      // console.log('Current month start:', currentMonthStart);
-
-      currentMonthStart.setDate(1)
-
-
-      const leadCount = await Lead.countDocuments({ developerPostDate: { $gte: currentMonthStart, $lt: new Date(currentMonthStart.getFullYear(),
+     
+      const monthWiseCount = await Caller.countDocuments({ developerPostDate: { $gte: currentMonthStart, $lt: new Date(currentMonthStart.getFullYear(),
         currentMonthStart.getMonth() + 1,0,23,59,59,999)
         } })
       
-      const callerCount = await Caller.countDocuments({ developerPostDate: { $gte: currentMonthStart, $lt: new Date(currentMonthStart.getFullYear(),
-        currentMonthStart.getMonth() + 1,0,23,59,59,999)
-        } })
-      
-      const developerCount = await Developer.countDocuments({ developerPostDate: { $gte: currentMonthStart, $lt: new Date(currentMonthStart.getFullYear(),
-        currentMonthStart.getMonth() + 1, 0, 23, 59, 59, 999)
-        } })
-      
-      const monthWiseCount = leadCount + callerCount + developerCount;
-      
+           
     counts.unshift({
       monthStart: currentMonthStart.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }), monthWiseCount
     })
