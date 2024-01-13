@@ -68,7 +68,7 @@ router.get('/userLogin', async (req, res) => {
   }
 });
 
-// FOR ADD LEAD POST ROUTE
+// FOR REGISTER USER POST ROUTE
 router.post('/addUser', async (req, res) => {
   try {
     const user = req.body;
@@ -108,7 +108,7 @@ router.post('/addUser', async (req, res) => {
 });
 
 // USER ROLE CHANGE PATCH ROUTE
-router.patch('/userRoleChange/:id', async(req, res) =>{
+router.patch('/userRoleChange/:id', verifyToken, verifyAdmin, async(req, res) =>{
   try {
     const id = req.params.id;
     const newRole = req.body
@@ -126,7 +126,7 @@ router.patch('/userRoleChange/:id', async(req, res) =>{
 })
 
  //--- CALLER INFO GET ROUTE
- router.get('/callerInfo', async(req, res) => {
+ router.get('/callerInfo', verifyToken, verifyAdmin, async(req, res) => {
   try {
     const result = await User.find({role: 'Caller'})
     res.send(result)
@@ -136,7 +136,7 @@ router.patch('/userRoleChange/:id', async(req, res) =>{
   }
  })
  //--- DEVELOPER INFO GET ROUTE
- router.get('/developerInfo', async(req, res) => {
+ router.get('/developerInfo', verifyToken, verifyAdmin, async(req, res) => {
   try {
     const result = await User.find({role: 'Developer'})
     res.send(result)
